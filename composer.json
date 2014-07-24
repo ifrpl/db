@@ -2,6 +2,10 @@
     "name": "ifrpl/db",
     "version": "1.0.0",
 
+    "require": {
+        "ifrpl/log": "dev-master"
+    },
+
     "autoload": {
         "psr-0": {
             "DB": "/"

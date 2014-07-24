@@ -2,6 +2,8 @@
 
 namespace DB;
 
+use IFR_log;
+
 class DB
 {
     static protected $pdo;
@@ -228,9 +230,9 @@ class DB
 		$caller = self::getCallerName();
 		if(!in_array($caller, self::$kipDebugLogMethods) && !$skipLog)
 		{
-			if(class_exists('IFR_Log', true))
+			if(class_exists('  IFR_Log', true))
             {
-                IFR_Log::log("[" . $caller . "][query: " . self::pdoDebug($query, $values) . "][$returnMethod $fetchMode]", IFR_Log::LEVEL_DEBUG);
+                  IFR_Log::log("[" . $caller . "][query: " . self::pdoDebug($query, $values) . "][$returnMethod $fetchMode]",   IFR_Log::LEVEL_DEBUG);
             }
 		}
 
@@ -271,9 +273,9 @@ class DB
 				$attempts--;
 				if( $attempts==0 )
 				{
-                    if (class_exists('IFR_Log', true))
+                    if (class_exists('  IFR_Log', true))
                     {
-                        IFR_Log::log($e->getMessage() . "[" . $caller . "][query: " . self::pdoDebug($query, $values) . "]", IFR_Log::LEVEL_ERROR);
+                          IFR_Log::log($e->getMessage() . "[" . $caller . "][query: " . self::pdoDebug($query, $values) . "]",   IFR_Log::LEVEL_ERROR);
                     }
                     throw New \Exception ($e->getMessage());
 				}
