@@ -1,7 +1,5 @@
 <?php
 
-namespace DB;
-
 class DB
 {
     static protected $pdo;
@@ -27,19 +25,19 @@ class DB
 
         if (!extension_loaded('pdo'))
 		{
-            throw new \PDOException(__CLASS__ . ': The \PDO extension is required for this class');
+            throw new PDOException(__CLASS__ . ': The PDO extension is required for this class');
         }
 
 		try
 		{
 			$dsn       = sprintf('mysql:host=%s;dbname=%s', $host, $name);
-			self::$pdo = new \PDO($dsn, $user, $pass, $options);
-			self::$pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			self::$pdo = new PDO($dsn, $user, $pass, $options);
+			self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			self::$pdo->exec("SET NAMES 'utf8'");
 		}
-		catch( \Exception $e )
+		catch( Exception $e )
 		{
-			throw new \Exception($e->getMessage());
+			throw new Exception($e->getMessage());
 		}
     }
 
@@ -63,7 +61,7 @@ class DB
 		self::$pdo->rollBack();
 	}
 
-    public static function fetch($table, array $params = null, $limit = false, $order = false, $fetchColumn = false, $fetchMode = \PDO::FETCH_ASSOC)
+    public static function fetch($table, array $params = null, $limit = false, $order = false, $fetchColumn = false, $fetchMode = PDO::FETCH_ASSOC)
     {
         if($fetchColumn)
             $query = "SELECT $fetchColumn FROM " . $table . "";
@@ -109,7 +107,7 @@ class DB
 		return self::query($query, $values, $returnMethod);
     }
 
-    public static function fetchOne($table, array $params = null, $fetchMode = \PDO::FETCH_ASSOC)
+    public static function fetchOne($table, array $params = null, $fetchMode = PDO::FETCH_ASSOC)
     {
 		$results = self::fetch($table, $params, 1, false, false, $fetchMode);
         if(!$results)
@@ -202,7 +200,7 @@ class DB
 		return self::query($query, $values, "rowCount");
     }
 
-    public static function fetchColumn($table, $fetchColumn, $params, $fetchMode = \PDO::FETCH_COLUMN)
+    public static function fetchColumn($table, $fetchColumn, $params, $fetchMode = PDO::FETCH_COLUMN)
     {
         return self::fetch($table, $params, 1, false, $fetchColumn, $fetchMode);
     }
@@ -211,7 +209,7 @@ class DB
 	 * @param       $query
 	 * @param array $values
 	 * @param string $returnMethod fetch,fetchAll,fetchColumn,rowCount,lastInsertId
-	 * @param string $fetchMode \PDO::* (PDO::FETCH_OBJ, \PDO::FETCH_PROPS_LATE)
+	 * @param string $fetchMode PDO::* (PDO::FETCH_OBJ, PDO::FETCH_PROPS_LATE)
 	 * @param integer $attempts
 	 *
 	 * @return bool
@@ -220,9 +218,9 @@ class DB
 
     /*
      * $returnMethod = "fetch" | "fetchAll" | "lastInsertId"
-     * $fetchMode = \PDO::FETCH_ASSOC | \PDO::FETCH_OBJ | \PDO::FETCH_COLUMN
+     * $fetchMode = PDO::FETCH_ASSOC | PDO::FETCH_OBJ | PDO::FETCH_COLUMN
      */
-	public static function query($query, array $values = null, $returnMethod = false, $fetchMode = \PDO::FETCH_ASSOC, $attempts = 1, $skipLog = false)
+	public static function query($query, array $values = null, $returnMethod = false, $fetchMode = PDO::FETCH_ASSOC, $attempts = 1, $skipLog = false)
 	{
 		//debug logging
 		$caller = self::getCallerName();
@@ -239,7 +237,7 @@ class DB
 			try
 			{
 				$stmt = self::prepare($query);
-				if( in_array($returnMethod,array("fetch","fetchAll")) && $fetchMode != \PDO::FETCH_COLUMN)
+				if( in_array($returnMethod,array("fetch","fetchAll")) && $fetchMode != PDO::FETCH_COLUMN)
 				{
 					$stmt->setFetchMode($fetchMode);
 				}
@@ -258,14 +256,14 @@ class DB
                 {
                     return $stmt->{$returnMethod}();
                 }
-                elseif($fetchMode == \PDO::FETCH_COLUMN)
+                elseif($fetchMode == PDO::FETCH_COLUMN)
                 {
-                    return $stmt->{$returnMethod}(\PDO::FETCH_COLUMN);
+                    return $stmt->{$returnMethod}(PDO::FETCH_COLUMN);
                 }
 				else
 					return true;
 			}
-			catch( \Exception $e )
+			catch( Exception $e )
 			{
 				sleep(1);
 				$attempts--;
@@ -275,7 +273,7 @@ class DB
                     {
                         IFR_Log::log($e->getMessage() . "[" . $caller . "][query: " . self::pdoDebug($query, $values) . "]", IFR_Log::LEVEL_ERROR);
                     }
-                    throw New \Exception ($e->getMessage());
+                    throw New Exception ($e->getMessage());
 				}
 			}
 		}
@@ -358,7 +356,7 @@ class DB
     {
         try {
             self::$pdo->query('SELECT 1');
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             self::init(self::$host, self::$name, self::$user, self::$pass); // Don't catch exception here, so that re-connect fail will throw exception
         }
         return true;
